@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>九九のアレイ図メーカー｜算数2年生のかけ算学習・小学校算数指導に便利な無料アプリ｜jimitas</title>
+
+  <meta name="description" content="算数2年生の九九の勉強に使えるアレイ図を簡単に表示。小学校算数のかけ算指導や家庭学習に便利な無料アプリ。jimitasが提供する" 地味に助かる"オンライン教材。">
+
+  <!-- SNS（Open Graph）対応 -->
+  <meta property="og:title" content="九九のアレイ図メーカー｜算数2年生のかけ算学習・小学校算数指導に便利な無料アプリ｜jimitas">
+  <meta property="og:description" content="算数2年生の九九の勉強に使えるアレイ図を簡単に表示。小学校算数のかけ算指導や家庭学習に便利な無料アプリ。jimitasが提供する" 地味に助かる"オンライン教材。">
+  <meta property="og:image" content="https://jimitas.com/kuku_array/og-image.png"> <!-- サムネ画像URLを設定 -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jimitas.com/kuku_array/">
+
+  <!-- Twitterカード -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="九九のアレイ図メーカー｜算数2年生のかけ算学習・小学校算数指導に便利な無料アプリ｜jimitas">
+  <meta name="twitter:description" content="算数2年生の九九の勉強に使えるアレイ図を簡単に表示。小学校算数のかけ算指導や家庭学習に便利な無料アプリ。jimitasが提供する" 地味に助かる"オンライン教材。">
+  <meta name="twitter:image" content="https://jimitas.com/kuku_array/og-image.png">
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <main class="array-app">
+    <header class="app-header">
+      <h1 class="app-title">九九のアレイ図メーカー</h1>
+    </header>
+
+    <section class="equation-section" aria-labelledby="equation-title">
+      <h4 id="equation-title" class="visually-hidden">計算式</h2>
+        <div class="equation-row">
+          <div id="equationDisplay" class="equation-display" aria-live="polite" aria-atomic="true"></div>
+          <button id="toggleAnswerBtn" class="toggle-button" type="button" aria-label="答えの表示を切り替える" aria-pressed="true">答えをかくす</button>
+        </div>
+    </section>
+
+    <section class="array-section" aria-labelledby="array-title">
+      <h2 id="array-title" class="visually-hidden">アレイ図</h2>
+      <div class="layout" aria-label="九九のアレイ図エリア">
+        <div class="corner" aria-hidden="true">×</div>
+
+        <div id="topControls" class="top-controls" aria-label="かける数（上段のボタン）"></div>
+        <div id="leftControls" class="left-controls" aria-label="かけられる数（左側のボタン）"></div>
+
+        <div id="arrayGrid" class="grid" role="grid" aria-label="九九のアレイ図" aria-rowcount="9" aria-colcount="9"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

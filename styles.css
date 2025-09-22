@@ -1,0 +1,421 @@
+:root {
+  /* 基準サイズ（PC） */
+  --cell-size: 50px;       /* 列幅 */
+  --row-size: 48px;        /* 行高（列幅よりわずかに小さく） */
+  --button-height: calc(var(--cell-size) * 0.75); /* 縦:横 = 3:4 */
+  --top-row-height: var(--button-height);         /* 上段ボタン行の高さをボタンに揃える */
+
+  /* ドットはセルに連動して縮小（最小18px, 最大40px） */
+  --dot-size: clamp(18px, calc(var(--cell-size) * 0.7), 40px);
+
+  --grid-gap: 0px;
+  --control-gap: 0px;
+  
+  /* カラーパレットの体系化 */
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+  --primary-800: #1e40af;
+  
+  --secondary-500: #ec4899;
+  --secondary-600: #db2777;
+  --secondary-700: #be185d;
+  
+  --neutral-100: #f7f8fa;
+  --neutral-200: #eef0f4;
+  --neutral-400: #c9ced6;
+  --neutral-600: #6b7280;
+  --text: #111827;
+  --lit: #ff8a3d;
+  
+  /* アニメーション設定 */
+  --transition-fast: 60ms ease;
+  --transition-normal: 120ms ease;
+  --transition-slow: 200ms ease;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  color: var(--text);
+  background: white;
+}
+
+/* ユーティリティクラス */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* アプリ全体 */
+.array-app {
+  max-width: 900px;
+  margin: 12px auto;
+  padding: 0 16px 24px;
+}
+
+/* ヘッダー */
+.app-header {
+  margin-bottom: 16px;
+}
+
+.app-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 8px 0px 8px;
+}
+
+/* 計算式セクション */
+.equation-section {
+  margin-bottom: 16px;
+}
+
+.equation-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  background-color: #f8f9fa;
+  padding: 16px;
+  border-radius: 4px;
+  width: fit-content;
+  /* スマホでも横並びを保つ */
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  min-width: 0;
+}
+
+.equation-display {
+  font-size: clamp(28px, 8vw, 50px);
+  margin-left: var(--cell-size);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  /* 2桁でもトグルで横ズレしないように最低幅を確保 */
+  display: inline-block;
+  white-space: nowrap;
+  min-width: 12ch;
+  /* 数字幅を揃える（対応フォントで有効） */
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  /* スマホでの表示調整 */
+  flex-shrink: 0;
+}
+
+/* 式の数字の下線スタイル */
+.first-number {
+  text-decoration: underline;
+  text-decoration-color: var(--secondary-500);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+
+.second-number {
+  text-decoration: underline;
+  text-decoration-color: var(--primary-600);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+
+/* ×記号の位置調整 */
+.equation-display {
+  vertical-align: middle;
+}
+
+/* トグルボタン */
+.toggle-button {
+  appearance: none;
+  border: 1px solid var(--neutral-400);
+  background: var(--neutral-100);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal), transform var(--transition-fast);
+  /* ボタンの幅を調整して縦長を防ぐ */
+  min-width: fit-content;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.toggle-button:hover { 
+  background: var(--neutral-200); 
+}
+
+.toggle-button:focus-visible {
+  outline: 3px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+.toggle-button:active { 
+  transform: translateY(1px); 
+}
+
+.toggle-button[aria-pressed="true"] {
+  background: var(--primary-50);
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) inset;
+}
+
+/* アレイ図セクション */
+.array-section {
+  margin-bottom: 16px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: var(--cell-size) 1fr;
+  /* 1行目: corner + top, 2行目: left + grid */
+  grid-template-rows: var(--top-row-height) auto;
+  grid-template-areas:
+    "corner top"
+    "left grid";
+  gap: 0;
+  align-items: start;
+  background-color: #f8f9fa;
+  padding: 16px;
+  border-radius: 6px;
+  width: fit-content;
+}
+
+.corner {
+  grid-area: corner;
+  display: grid;
+  /* 上段ボタンと下端を揃える */
+  place-items: end center;
+  color: var(--neutral-600);
+  font-weight: 600;
+  font-size: 24px;
+  user-select: none;
+}
+
+/* コントロールボタン */
+.top-controls {
+  grid-area: top;
+  display: grid;
+  grid-template-columns: repeat(9, var(--cell-size));
+  gap: var(--control-gap);
+  /* 下詰め（縦: end／横: center） */
+  place-items: end center;
+}
+
+.left-controls {
+  grid-area: left;
+  display: grid;
+  grid-template-rows: repeat(9, var(--row-size));
+  gap: var(--control-gap);
+  place-items: center;
+}
+
+/* ボタンの共通スタイル */
+.top-controls button,
+.left-controls button {
+  appearance: none;
+  border: 2px solid var(--neutral-400);
+  border-radius: 6px;
+  width: var(--cell-size);
+  height: var(--button-height);
+  padding: 0;
+  line-height: var(--button-height);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.06);
+  transition: background var(--transition-normal), border-color var(--transition-normal), transform var(--transition-fast), box-shadow var(--transition-normal);
+  margin: 0;
+}
+
+/* 上段ヘッダのボタン */
+.top-controls button { 
+  width: calc(var(--cell-size) - 2px); 
+  background: var(--primary-600);
+  color: white;
+  border-color: var(--primary-700);
+}
+
+/* 左側のボタン */
+.left-controls button {
+  background: var(--secondary-500);
+  color: white;
+  border-color: var(--secondary-600);
+}
+
+/* ホバー効果 */
+.top-controls button:hover,
+.left-controls button:hover {
+  box-shadow: 0 2px 4px rgba(17, 24, 39, 0.08);
+}
+
+.top-controls button:hover {
+  background: var(--primary-800);
+}
+
+.left-controls button:hover {
+  background: var(--secondary-700);
+}
+
+/* フォーカス表示 */
+.top-controls button:focus-visible,
+.left-controls button:focus-visible {
+  outline: 3px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+.top-controls button:active,
+.left-controls button:active {
+  transform: translateY(1px);
+}
+
+/* 選択状態 */
+.top-controls button.selected,
+.left-controls button.selected,
+.top-controls button[aria-pressed="true"],
+.left-controls button[aria-pressed="true"] {
+  background: var(--primary-50);
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) inset;
+  color: var(--text);
+}
+
+/* グリッド */
+.grid {
+  grid-area: grid;
+  display: grid;
+  grid-template-columns: repeat(9, var(--cell-size));
+  grid-template-rows: repeat(9, var(--row-size));
+  gap: var(--grid-gap);
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  place-items: center; /* center dots in each cell */
+  width: fit-content;
+  justify-self: start;
+}
+
+/* ドット */
+.dot {
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f0f3f8 40%, #dde3ec 100%);
+  border: 1px solid var(--neutral-400);
+  box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04), 0 2px 4px rgba(17, 24, 39, 0.08);
+  transition: background var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+/* 点灯状態 */
+.dot.lit {
+  background: var(--lit);
+  border-color: #e26e00;
+  box-shadow: 0 0 0 2px rgba(255, 138, 61, 0.25) inset, 0 1px 0 rgba(17, 24, 39, 0.06);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  :root {
+    --cell-size: 42px;
+    --row-size: 40px;
+    --button-height: max(32px, calc(var(--cell-size) * 0.75));
+    --top-row-height: var(--button-height);
+  }
+  
+  /* タブレット以下での計算式行の調整 */
+  .equation-row {
+    padding: 12px;
+    gap: 8px;
+  }
+  
+  .equation-display {
+    margin-left: calc(var(--cell-size) * 0.8);
+    min-width: 10ch;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --cell-size: 36px;
+    --row-size: 34px;
+    --button-height: max(28px, calc(var(--cell-size) * 0.75));
+    --top-row-height: var(--button-height);
+  }
+  
+  /* スマホでの計算式行の調整 */
+  .equation-row {
+    padding: 10px;
+    gap: 6px;
+  }
+  
+  .equation-display {
+    margin-left: calc(var(--cell-size) * 0.6);
+    min-width: 8ch;
+    font-size: clamp(20px, 6vw, 28px);
+  }
+  
+  /* スマホでのトグルボタンの調整 */
+  .toggle-button {
+    padding: 8px 12px;
+    font-size: 13px;
+    min-width: auto;
+    width: auto;
+  }
+}
+
+@media (max-width: 360px) {
+  :root {
+    --cell-size: 32px;
+    --row-size: 30px;
+    --button-height: max(20px, calc(var(--cell-size) * 0.75));
+    --top-row-height: var(--button-height);
+  }
+}
+
+@media (max-width: 320px) {
+  :root {
+    --cell-size: 28px;
+    --row-size: 26px;
+    --button-height: max(44px, calc(var(--cell-size) * 0.75));
+    --top-row-height: var(--button-height);
+  }
+}
+
+/* アクセシビリティ対応 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 大画面対応 */
+@media (min-width: 1200px) {
+  .array-app {
+    max-width: 1100px;
+  }
+  
+  :root {
+    --cell-size: 60px;
+    --row-size: 58px;
+    --button-height: calc(var(--cell-size) * 0.75);
+    --top-row-height: var(--button-height);
+  }
+}
