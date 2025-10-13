@@ -47,6 +47,7 @@ body {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", Arial, "Apple Color Emoji", "Segoe UI Emoji";
   color: var(--text);
   background: white;
+  touch-action: manipulation; /* ダブルタップズームを無効化、スクロールは有効 */
 }
 
 /* ユーティリティクラス */
